@@ -1,10 +1,9 @@
-# cordova-plugin-mauron85-background-geolocation
+# @mauron85/cordova-plugin-background-geolocation
 
-# Breaking changes
+## We're moving
 
-Documentation has been updated to v3. Documentation for version 2.x can be found [here](https://github.com/mauron85/cordova-plugin-background-geolocation/tree/2.x).
+Npm package is now [@mauron85/cordova-plugin-background-geolocation](https://www.npmjs.com/package/@mauron85/cordova-plugin-background-geolocation)!
 
-Plugin has been upgraded significantly since v2. Please read docs thoroughly.
 
 ## Donation
 
@@ -23,6 +22,14 @@ In that case, also provide relevant parts of output of `adb logcat` command.
 
 # Android background service issues
 There are repeatedly reported issues with some android devices not working in the background. Check if your device model is on  [dontkillmyapp list](https://dontkillmyapp.com) before you report new issue. For more information check out [dontkillmyapp.com](https://dontkillmyapp.com/problem).
+
+Another confusing fact about Android services is concept of foreground services. Foreground service in context of Android OS is different thing than background geolocation service of this plugin (they're related thought). **Plugin's background geolocation service** actually **becomes foreground service** when app is in the background. Confusing, right? :D
+
+If service wants to continue to run in the background, it must "promote" itself to `foreground service`. Foreground services must have visible notification, which is the reason, why you can't disable drawer notification.
+
+The notification can only be disabled, when app is running in the foreground, by setting config option `startForeground: false` (this is the default option), but will always be visible in the background (if service was started).
+
+Recommend you to read https://developer.android.com/about/versions/oreo/bac
 
 ## Description
 
@@ -48,7 +55,7 @@ See [MIGRATIONS.md](/MIGRATIONS.md)
 ## Installing the plugin
 
 ```
-cordova plugin add cordova-plugin-mauron85-background-geolocation@alpha
+cordova plugin add @mauron85/cordova-plugin-background-geolocation
 ```
 
 You may also want to change default iOS permission prompts and set specific google play version and android support library version for compatibility with other plugins.
@@ -56,7 +63,7 @@ You may also want to change default iOS permission prompts and set specific goog
 **Note:** Always consult documentation of other plugins to figure out compatible versions.
 
 ```
-cordova plugin add cordova-plugin-mauron85-background-geolocation@alpha \
+cordova plugin add @mauron85/cordova-plugin-background-geolocation \
   --variable GOOGLE_PLAY_SERVICES_VERSION=11+ \
   --variable ANDROID_SUPPORT_LIBRARY_VERSION=23+ \
   --variable ALWAYS_USAGE_DESCRIPTION="App requires ..." \
@@ -66,11 +73,13 @@ cordova plugin add cordova-plugin-mauron85-background-geolocation@alpha \
 Or in `config.xml`:
 
 ```
-<plugin name="cordova-plugin-mauron85-background-geolocation">
+<plugin name="cordova-plugin-background-geolocation" spec="@mauron85/cordova-plugin-background-geolocation@~3.1.0">
   <variable name="GOOGLE_PLAY_SERVICES_VERSION" value="11+" />
-  <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="23+" />
-  <variable name="ALWAYS_USAGE_DESCRIPTION" value="App requires background tracking enabled" />
-  <variable name="MOTION_USAGE_DESCRIPTION" value="App requires motion detection" />
+  <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="26+" />
+  <variable name="ICON" value="@mipmap/icon" />
+  <variable name="SMALL_ICON" value="@mipmap/icon" />
+  <variable name="ALWAYS_USAGE_DESCRIPTION" value="App requires background tracking " />
+  <variable name="MOTION_USAGE_DESCRIPTION" value="App requires motion detection" /> 
 </plugin>
 ```
 
@@ -83,7 +92,7 @@ This plugin should work with Adobe® PhoneGap™ Build without any modification.
 To register plugin add following line into your `config.xml`:
 
 ```
-<plugin name="cordova-plugin-mauron85-background-geolocation"/>
+<plugin name="@mauron85/cordova-plugin-background-geolocation"/>
 ```
 
 **Note:** If you're using *hydration*, you have to download and reinstall your app with every new version of the plugin, as plugins are not updated.
@@ -176,7 +185,7 @@ function onDeviceReady() {
       // we need to set delay or otherwise alert may not be shown
       setTimeout(function() {
         var showSettings = confirm('App requires location tracking permission. Would you like to open app settings?');
-        if (showSetting) {
+        if (showSettings) {
           return BackgroundGeolocation.showAppSettings();
         }
       }, 1000);
@@ -280,7 +289,7 @@ BackgroundGeolocation.configure({
 
 In this case new configuration options will be merged with stored configuration options and changes will be applied immediately.
 
-**Important:** Because configuration options are applied partially, it's not possible to reset option to default value just by emitting it's key name and calling `configure` method. To reset configuration option to the default value, it's key must be set to `null`!
+**Important:** Because configuration options are applied partially, it's not possible to reset option to default value just by omitting it's key name and calling `configure` method. To reset configuration option to the default value, it's key must be set to `null`!
 
 ```
 // Example: reset postTemplate to default
